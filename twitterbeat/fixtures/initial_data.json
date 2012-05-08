@@ -1,0 +1,6 @@
+[{"pk": 1, 
+"model": "twitterbeat.account", 
+"fields": {"username": "valdergallo", 
+		   "active": true, 
+		   "tweet_count": 0}
+		   }]
