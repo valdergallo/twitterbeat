@@ -123,7 +123,7 @@ class TwitterBeat(Thread):
         try:
             tweets = api.GetUserTimeline(self.twitter_user, count=10)
         except Exception, e:
-            ConectionError.objects.create(text=e)
+            ConnectionError.objects.create(text=e)
             return self.parse_rss()
         parsed = []
         for tweet in tweets:

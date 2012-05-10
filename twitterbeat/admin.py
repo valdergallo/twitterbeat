@@ -8,7 +8,8 @@ Copyright (c) 2012 valdergallo. All rights reserved.
 """
 
 from django.contrib import admin
-from twitterbeat.models import Tweet, Account
+from twitterbeat.models import Tweet, Account, ConnectionError
 
 admin.site.register(Tweet)
 admin.site.register(Account)
+admin.site.register(ConnectionError)

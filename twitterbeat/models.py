@@ -29,8 +29,7 @@ class Account(models.Model):
     def __unicode__(self):
         return self.username
         
-
-class ConectionError(models.Model):
+class ConnectionError(models.Model):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now=True)
     
