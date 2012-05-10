@@ -138,6 +138,7 @@ class TwitterBeat(Thread):
     def run(self):
         #sys.stdout.write('STARTED \n')
         print 'STARTED \n'
+        self._is_shutdown.set()
         tweets = self.parse_tweet()
         
         for tweet in tweets:
