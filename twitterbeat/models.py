@@ -25,7 +25,14 @@ class Tweet(models.Model):
 class Account(models.Model):
     username = models.CharField(max_length=255)
     active = models.BooleanField(default=True)
-    tweet_count = models.IntegerField(default=0, db_index=True)
     
     def __unicode__(self):
         return self.username
+        
+
+class ConectionError(models.Model):
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now=True)
+    
+    def __unicode__(self):
+        return self.created_at
