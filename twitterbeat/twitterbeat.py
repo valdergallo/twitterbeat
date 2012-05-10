@@ -53,7 +53,10 @@ class TwitterBeat(Thread):
         
         self.KeepAlive = True
         self.count_runner = 0
+        #WTF i need use this on daemon
         #self.daemon = True
+        #self.logfile=logfile
+        #self.pidfile=pidfile
         
         user_id  = getattr(settings, 'TWITTER_USER_ID', 
                             Account.objects.filter(active=True).latest('id').id)
