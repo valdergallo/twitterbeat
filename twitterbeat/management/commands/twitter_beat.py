@@ -13,7 +13,7 @@ from twitterbeat import TwitterBeat
 from django.conf import settings
 
 options = (
-        make_option('--start', action='store_true',dest='start', default=False, 
+        make_option('--start', dest='daemon', action="start", default=False, 
             help='Start service to twiiter check'),
         make_option('--stop', action='store_true',dest='stop', default=False, 
             help='Close service'),
