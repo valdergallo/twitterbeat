@@ -9,32 +9,65 @@ Copyright (c) 2012 valdergallo. All rights reserved.
 import threading
 import time
 import re
+import sys
 from datetime import datetime
 
 import twitter
 import feedparser
 
 from django.conf import settings
-from twitterbeat.models import Account, Tweet
+from twitterbeat.models import Account, Tweet, ConectionError
 
 from django.contrib.admin.models import LogEntry, ADDITION
 from django.contrib.contenttypes.models import ContentType
 
+_Thread = threading.Thread
+_Event = threading._Event
 
-class TwitterBeat(threading.Thread):
+
+class Event(_Event):
+    # Event from Celery
+    if not hasattr(threading._Event, "is_set"):
+        is_set = _Event.isSet
+
+
+class Thread(_Thread):
+    # Thread from Celery
+    if not hasattr(_Thread, "is_alive"):  # pragma: no cover
+        is_alive = _Thread.isAlive
+
+    if not hasattr(_Thread, "daemon"):    # pragma: no cover
+        daemon = property(_Thread.isDaemon, _Thread.setDaemon)
+
+    if not hasattr(_Thread, "name"):      # pragma: no cover
+        name = property(_Thread.getName, _Thread.setName)
+
+
+class TwitterBeat(Thread):
     
     def __init__(self):
         threading.Thread.__init__(self)
+        self._is_shutdown = Event()
+        self._is_stopped = Event()
         self.KeepAlive = True
+        self.count_runner = 0
+        self.daemon = True
+        
         user_id  = getattr(settings, 'TWITTER_USER_ID', 
                             Account.objects.filter(active=True).latest('id').id)
+                            
         self.twitter_user = Account.objects.get(id=user_id, active=True)
         self.twitter_rss = 'http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=%s' \
                        % self.twitter_user.username
-        self.count_runner = 0
 
     def stop(self):
         self.KeepAlive = False 
+        self._is_shutdown.set()
+        #self._is_stopped.wait()
+        sys.stdout.write('STOOPED \n')
+        if self.is_alive():
+            sys.stdout.write('IS ALIVE \n')
+            self.join(1e100)
 
     @staticmethod
     def _get_status_id_from_link(link):
@@ -129,7 +162,11 @@ class TwitterBeat(threading.Thread):
             tweet.id
         """
         api = twitter.Api()
-        tweets = api.GetUserTimeline(self.twitter_user, count=10)
+        try:
+            tweets = api.GetUserTimeline(self.twitter_user, count=10)
+        except Exception, e:
+            ConectionError.objects.create(text=e)
+
         parsed = []
         for tweet in tweets:
             parsed.append({
@@ -141,8 +178,10 @@ class TwitterBeat(threading.Thread):
         return parsed
     
     def run(self):
-        print 'Getting Tweets'
+        sys.stdout.write('Getting Twitter \n')
+        shutdown = self._is_shutdown
         tweets = self._parse_tweet()
+        
         for tweet in tweets:
             tw , created = Tweet.objects.get_or_create(**tweet)
             if created:
@@ -156,9 +195,14 @@ class TwitterBeat(threading.Thread):
             
         time.sleep(60) # 60 seconds
         
-        if self.twitter_user.active and self.KeepAlive:
+        if self.twitter_user.active and self.KeepAlive and not shutdown.is_set():
             self.count_runner += 1
             self.run()
         else:
+            self.stop()
             raise SystemExit()
-        
+
+
+if __name__ == "__main__":
+    beat = TwitterBeat()
+    beat.start()
