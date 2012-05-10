@@ -10,7 +10,7 @@ Copyright (c) 2012 valdergallo. All rights reserved.
 from django.core.management.base import BaseCommand, CommandError
 from optparse import make_option
 from twitterbeat import TwitterBeat
-
+from django.conf import settings
 
 options = (
         make_option('--start', action='store_true',dest='start', default=False, 
@@ -20,26 +20,30 @@ options = (
         make_option('--status', action='store_true',dest='status', default=False, 
             help='Status service'),
         )
+        
+TWITTER_BEAT = TwitterBeat()
 
 class Command(BaseCommand):
     help = 'Twitter Beat is one service active on background to check updates on status from one user'
     option_list = BaseCommand.option_list + options
     
     def start_thread(self, *args, **options):
-        print 'start'
-        self.settigns.TWITTER_BEAT = TwitterBeat()
-        self.settigns.TWITTER_BEAT.start()
+        TWITTER_BEAT.start()
 
     def stop_thread(self, *args, **options):
-        print 'stop'
-        self.settigns.TWITTER_BEAT.stop()
+        TWITTER_BEAT.stop()
 
     def status_thread(self, *args, **options):
-        print 'status'
-        self.settigns.TWITTER_BEAT.KeepAlive
+        print 'Status:' , TWITTER_BEAT.KeepAlive
     
     def handle(self, *args, **options):
-        print options
-        print '---------------------------------------'
-        print args
-        print self.help
+        if options['start']:
+            self.start_thread()
+        elif options['stop']:
+            self.stop_thread()
+        elif options['status']:
+            self.status_thread()
+        else:
+            print self.help
+
+
