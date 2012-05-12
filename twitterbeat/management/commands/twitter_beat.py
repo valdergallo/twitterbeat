@@ -21,28 +21,20 @@ options = (
             help='Status service'),
         )
         
-TWITTER_BEAT = TwitterBeat()
+TWITTER_BEAT = TwitterBeat('./twitterbeat.pid')
 
 class Command(BaseCommand):
     help = 'Twitter Beat is one service active on background to check updates on status from one user'
     option_list = BaseCommand.option_list + options
     
-    def start_thread(self, *args, **options):
-        TWITTER_BEAT.start()
-
-    def stop_thread(self, *args, **options):
-        TWITTER_BEAT.stop()
-
-    def status_thread(self, *args, **options):
-        print 'Status:' , TWITTER_BEAT.KeepAlive
-    
     def handle(self, *args, **options):
         if options['start']:
-            self.start_thread()
+            TWITTER_BEAT.daemon = True
+            TWITTER_BEAT.start()
         elif options['stop']:
-            self.stop_thread()
+            TWITTER_BEAT.stop()
         elif options['status']:
-            self.status_thread()
+            print 'Status:' , TWITTER_BEAT.KeepAlive
         else:
             print self.help
 
