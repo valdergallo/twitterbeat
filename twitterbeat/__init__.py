@@ -47,8 +47,7 @@ class TwitterBeat(Daemon):
             
     @staticmethod
     def _convert_datetime(created_at_string):
-        """Convert string to datetime
-        """
+        """Convert string to datetime"""
         fmt = '%a %b %d %H:%M:%S +0000 %Y' #Tue Apr 26 08:57:55 +0000 2011
         return datetime.strptime(created_at_string, fmt)
         
@@ -98,7 +97,6 @@ class TwitterBeat(Daemon):
         return parsed
     
     def handle(self):
-        print 'Getting Twitters \n'
         tweets = self.parse_tweet()
         
         for tweet in tweets:
