@@ -15,7 +15,7 @@ from django.conf import settings
 options = (
         make_option('--start', action="store_true", dest='start', default=False, 
                     help='Start service to twitter check'),
-        make_option('--restart', action="store_true", dest='start', default=False, 
+        make_option('--restart', action="store_true", dest='restart', default=False, 
                     help='Restart service to twitter check'),
         make_option('--stop', action='store_true',dest='stop', default=False, 
             help='Close service'),
