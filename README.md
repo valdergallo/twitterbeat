@@ -22,6 +22,12 @@ TO INSTALL
 	    'twitterbeat'
 	)
 	
+CONFIGURE
+---------
+
+	Go to django admin on app twitterbeat you will see Accounts. 
+	Set your username and save and start daemon with command.
+	
 	
 USAGE
 -----
