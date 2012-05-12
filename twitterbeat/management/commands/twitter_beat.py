@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-twiiter_beat.py
+twitter_beat.py
 
 Created by Valder Gallo on 2012-05-05.
 Copyright (c) 2012 valdergallo. All rights reserved.
@@ -14,7 +14,9 @@ from django.conf import settings
 
 options = (
         make_option('--start', action="store_true", dest='start', default=False, 
-            help='Start service to twiiter check'),
+                    help='Start service to twitter check'),
+        make_option('--restart', action="store_true", dest='start', default=False, 
+                    help='Restart service to twitter check'),
         make_option('--stop', action='store_true',dest='stop', default=False, 
             help='Close service'),
         make_option('--status', action='store_true',dest='status', default=False, 
@@ -29,8 +31,9 @@ class Command(BaseCommand):
     
     def handle(self, *args, **options):
         if options['start']:
-            TWITTER_BEAT.daemon = True
             TWITTER_BEAT.start()
+        elif options['restart']:
+            TWITTER_BEAT.restart()
         elif options['stop']:
             TWITTER_BEAT.stop()
         elif options['status']:
