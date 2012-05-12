@@ -41,6 +41,6 @@ python manage.py twitter_beat --stop
 Requirements
 ------------
 - django 1.2.x or higher
-- python-twitter
-- parser
+- python-twitter==0.8.2
+- feedparser==5.1.2
 
