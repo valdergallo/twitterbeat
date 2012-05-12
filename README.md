@@ -15,7 +15,14 @@ TO INSTALL
 	2. Extract it
 	3. Execute in the extracted directory: python setup.py install
 
-
+	Add on settings 
+	
+	INSTALLED_APPS = (
+	    ...
+	    'twitterbeat'
+	)
+	
+	
 USAGE
 -----
 
