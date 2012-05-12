@@ -57,3 +57,9 @@ Requirements
 - python-twitter==0.8.2
 - feedparser==5.1.2
 
+
+TODO
+----
+
+- Test daemon on Windows
+- CSS to default twitter list

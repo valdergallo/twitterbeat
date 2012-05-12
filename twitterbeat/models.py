@@ -34,4 +34,4 @@ class ConnectionError(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     
     def __unicode__(self):
-        return self.created_at
+        return self.text
