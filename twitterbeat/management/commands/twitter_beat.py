@@ -19,8 +19,6 @@ options = (
                     help='Restart service to twitter check'),
         make_option('--stop', action='store_true',dest='stop', default=False, 
             help='Close service'),
-        make_option('--status', action='store_true',dest='status', default=False, 
-            help='Status service'),
         )
         
 TWITTER_BEAT = TwitterBeat('./twitterbeat.pid')
@@ -36,8 +34,6 @@ class Command(BaseCommand):
             TWITTER_BEAT.restart()
         elif options['stop']:
             TWITTER_BEAT.stop()
-        elif options['status']:
-            print 'Status:' , TWITTER_BEAT.KeepAlive
         else:
             print self.help
 

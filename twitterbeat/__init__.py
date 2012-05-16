@@ -26,8 +26,7 @@ class TwitterBeat(Daemon):
     
     def __init__(self, pidfile, *args, **kwargs):
         super(TwitterBeat, self).__init__(self, *args, **kwargs)
-        self.count_runner = 0
-        self.KeepAlive = False
+        self.KeepAlive = True
         self.pidfile = pidfile
         
         user_id  = getattr(settings, 'TWITTER_USER_ID', 
@@ -117,11 +116,9 @@ class TwitterBeat(Daemon):
         super(TwitterBeat, self).stop()
     
     def run(self):
-        self.KeepAlive = True
         while True:
-            self.handle()
             if self.twitter_user.active:
-                self.count_runner += 1
+                self.handle()
             else:
                 self.stop()
 
