@@ -27,7 +27,7 @@ setup(name='twitterbeat',
       author="valdergallo",
       author_email='valdergallo@gmail.com',
       keywords='python django twitter follow subprocess daemon',
-      description='A library to follow one user from twitter with daemon mode.',
+      description='A library for follow one user from twitter with daemon mode.',
       license='MIT',
       classifiers=[
           'Framework :: Django',
@@ -35,7 +35,7 @@ setup(name='twitterbeat',
           'Topic :: Software Development'
       ],
 
-      version='0.9',
+      version='0.9.1',
       install_requires=install_requires,
       # tests_require=tests_require,
       # test_suite='runtests.runtests',
