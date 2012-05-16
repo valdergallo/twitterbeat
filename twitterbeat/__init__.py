@@ -8,7 +8,6 @@ Copyright (c) 2012 valdergallo. All rights reserved.
 """
 import time
 import re
-import sys
 from datetime import datetime
 
 import twitter
@@ -16,20 +15,15 @@ import feedparser
 
 from django.conf import settings
 from twitterbeat.models import Account, Tweet, ConnectionError
-from twitterbeat.daemon import Daemon
 
 from django.contrib.admin.models import LogEntry, ADDITION
 from django.contrib.contenttypes.models import ContentType
  
 
-class TwitterBeat(Daemon):
+class TwitterBeat:
     
-    def __init__(self, pidfile, *args, **kwargs):
-        super(TwitterBeat, self).__init__(self, *args, **kwargs)
-        self.count_runner = 0
-        self.KeepAlive = False
-        self.pidfile = pidfile
-        
+    def __init__(self):
+        self.KeepAlive = True
         user_id  = getattr(settings, 'TWITTER_USER_ID', 
                             Account.objects.filter(active=True).latest('id').id)
                             
@@ -102,6 +96,7 @@ class TwitterBeat(Daemon):
         for tweet in tweets:
             tw , created = Tweet.objects.get_or_create(**tweet)
             if created:
+                print '%s - Create new item \n' % datetime.now()
                 LogEntry.objects.log_action(
                     user_id         = self.twitter_user.pk, 
                     content_type_id = ContentType.objects.get_for_model(Tweet).pk,
@@ -110,22 +105,21 @@ class TwitterBeat(Daemon):
                     action_flag     = ADDITION
                 )
                 
+        print '%s - Getting Twitter \n' % datetime.now()
         time.sleep(60)
     
     def stop(self):
         self.KeepAlive = False
-        super(TwitterBeat, self).stop()
+        raise SystemExit()
     
-    def run(self):
-        self.KeepAlive = True
+    def start(self):
         while True:
-            self.handle()
-            if self.twitter_user.active:
-                self.count_runner += 1
+            if self.KeepAlive:
+                print '%s - Starting Twitter \n' % datetime.now()
+                self.handle()
             else:
                 self.stop()
 
-
 if __name__ == "__main__":
-    beat = TwitterBeat('./twitterbeat.pid')
+    beat = TwitterBeat()
     beat.start()

@@ -11,6 +11,7 @@ from django.core.management.base import BaseCommand, CommandError
 from optparse import make_option
 from twitterbeat import TwitterBeat
 from django.conf import settings
+from twitterbeat.daemon import Daemon
 
 options = (
         make_option('--start', action="store_true", dest='start', default=False, 
@@ -23,7 +24,12 @@ options = (
             help='Status service'),
         )
         
-TWITTER_BEAT = TwitterBeat('./twitterbeat.pid')
+class Beat(Daemon):
+    def run(self):
+        beat = TwitterBeat()
+        beat.start()
+
+TWITTER_BEAT = Beat('./twitterbeat.pid')
 
 class Command(BaseCommand):
     help = 'Twitter Beat is one service active on background to check updates on status from one user'
