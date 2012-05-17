@@ -8,7 +8,6 @@ Copyright (c) 2012 valdergallo. All rights reserved.
 """
 import time
 import re
-import sys
 from datetime import datetime
 
 import twitter
@@ -20,18 +19,17 @@ from twitterbeat.daemon import Daemon
 
 from django.contrib.admin.models import LogEntry, ADDITION
 from django.contrib.contenttypes.models import ContentType
- 
+
 
 class TwitterBeat(Daemon):
-    
+
     def __init__(self, pidfile, *args, **kwargs):
         super(TwitterBeat, self).__init__(self, *args, **kwargs)
         self.KeepAlive = True
         self.pidfile = pidfile
-        
         user_id  = getattr(settings, 'TWITTER_USER_ID', 
                             Account.objects.filter(active=True).latest('id').id)
-                            
+
         self.twitter_user = Account.objects.get(id=user_id, active=True)
         self.twitter_rss = 'http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=%s' \
                        % self.twitter_user.username
@@ -43,13 +41,13 @@ class TwitterBeat(Daemon):
             return item.pop()
         else:
             return None
-            
+
     @staticmethod
     def _convert_datetime(created_at_string):
         """Convert string to datetime"""
         fmt = '%a %b %d %H:%M:%S +0000 %Y' #Tue Apr 26 08:57:55 +0000 2011
         return datetime.strptime(created_at_string, fmt)
-        
+
     def parse_rss(self):
         """
         #fields
@@ -69,7 +67,7 @@ class TwitterBeat(Daemon):
             'status_id': self._get_status_id_from_link(tweet.link),
             })
         return parsed
-    
+
     def parse_tweet(self):
         """
          #fields 
@@ -94,10 +92,10 @@ class TwitterBeat(Daemon):
             'status_id': tweet.id,
             })
         return parsed
-    
+
     def handle(self):
         tweets = self.parse_tweet()
-        
+
         for tweet in tweets:
             tw , created = Tweet.objects.get_or_create(**tweet)
             if created:
@@ -108,13 +106,13 @@ class TwitterBeat(Daemon):
                     object_id       = tw.pk,
                     action_flag     = ADDITION
                 )
-                
+
         time.sleep(60)
-    
+
     def stop(self):
         self.KeepAlive = False
         super(TwitterBeat, self).stop()
-    
+
     def run(self):
         while True:
             if self.twitter_user.active:

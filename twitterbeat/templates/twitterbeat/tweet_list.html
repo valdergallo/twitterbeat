@@ -1,8 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-	"http://www.w3.org/TR/html4/loose.dtd">
+    "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <header>
-	<title>Twiter List</title>
+    <title>Twiter List</title>
 </header>
 <body>
 {% block content %}
@@ -10,8 +10,8 @@
     <ul>
         {% for tweet in object_list %}
             <li>{{ tweet.text }} - {{ tweet.created_at }} </li>
-		{% empty %}
-			<li>No tweets</li>
+        {% empty %}
+            <li>No tweets</li>
         {% endfor %}
     </ul>
 {% endblock %}
